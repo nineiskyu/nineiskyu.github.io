@@ -1,569 +1,347 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-TW">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>東海</title>
-    <meta name="google-adsense-account" content="ca-pub-3726552258466882" />
+    <title>拼出SJ</title>
+    <link rel="”icon”" href="/icon.png" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
     <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
+      :root {
+        --primary: #1a3263; /* 深藍 */
+        --secondary: #547792; /* 灰藍 */
+        --accent: #fab95b; /* 暖金 */
+        --bg: #e8e2db; /* 米白 */
+        --white: #ffffff;
       }
 
       body {
-        font-family: "Arial", sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
+        font-family: "Noto Sans TC", sans-serif;
+        background-color: var(--bg);
+        color: var(--primary);
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
-        padding: 20px;
+        padding: 40px 20px;
+        margin: 0;
       }
 
-      .game-container {
-        background: white;
-        border-radius: 20px;
-        padding: 30px;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-        max-width: 600px;
-        width: 100%;
-      }
-
-      .title {
-        text-align: center;
-        color: #333;
-        font-size: 2.5rem;
+      h1 {
         margin-bottom: 30px;
-        font-weight: bold;
+        letter-spacing: 2px;
+        text-align: center;
       }
 
-      .character-container {
+      /* Tab 導航列 */
+      .tab-container {
         display: flex;
-        justify-content: center;
-        position: relative;
-        height: 540px;
-        width: 540px;
-      }
-
-      .character-base {
-        position: relative;
-        width: 100%;
-        height: 100%;
-      }
-
-      .character-layer {
-        position: absolute;
-
-        transition: opacity 0.3s ease;
-      }
-      .bg-layer {
-        position: absolute;
-        top: 0;
-
-        transition: opacity 0.3s ease;
-      }
-      .bg-layer img {
-        height: 540px;
-        width: 540px;
-
-        object-fit: cover;
-        filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.1));
-      }
-
-      .character-layer img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-        filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.1));
-      }
-
-      .base-character {
-        z-index: 1;
-      }
-
-      .clothing-layer {
-        z-index: 5;
-      }
-      .product-layer {
-        z-index: 6;
-      }
-      .background-layer {
-        z-index: 0;
-      }
-
-      .pants-layer {
-        z-index: 3;
-      }
-
-      .shoes-layer {
+        gap: 5px;
+        margin-bottom: -1px;
         z-index: 2;
       }
 
-      .controls {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        margin-top: 10px;
-      }
-
-      .control-row {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        background: #f8f9fa;
-        padding: 15px 20px;
-        border-radius: 15px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-      }
-
-      .control-label {
-        font-weight: bold;
-        color: #333;
-        font-size: 1.1rem;
-        min-width: 60px;
-      }
-
-      .control-buttons {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-      }
-
-      .control-btn {
-        width: 40px;
-        height: 40px;
-        border: none;
-        border-radius: 50%;
-        background: #667eea;
-        color: white;
-        font-size: 1.2rem;
+      .tab {
+        padding: 12px 20px;
+        background: rgba(255, 255, 255, 0.5);
+        border: 1px solid #ccc;
+        border-bottom: none;
+        border-radius: 12px 12px 0 0;
         cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.3s ease;
-        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
-      }
-
-      .control-btn:hover {
-        background: #5a67d8;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-      }
-
-      .control-btn:active {
-        transform: translateY(0);
-      }
-
-      .item-name {
-        min-width: 100px;
-        text-align: center;
-        font-weight: 500;
-        color: #555;
-      }
-
-      .placeholder-img {
-        background: linear-gradient(45deg, #f0f0f0 25%, transparent 25%),
-          linear-gradient(-45deg, #f0f0f0 25%, transparent 25%),
-          linear-gradient(45deg, transparent 75%, #f0f0f0 75%),
-          linear-gradient(-45deg, transparent 75%, #f0f0f0 75%);
-        background-size: 20px 20px;
-        background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
-        border: 2px dashed #ccc;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #999;
+        color: var(--secondary);
+        font-weight: bold;
+        transition: 0.3s;
         font-size: 0.9rem;
-        text-align: center;
-        padding: 10px;
       }
 
-      .image-error {
-        background: #ffe6e6;
-        border: 2px dashed #ff9999;
-        color: #cc0000;
+      .tab.active {
+        background: var(--white);
+        color: var(--primary);
+        border-top: 5px solid var(--primary);
+        padding-bottom: 13px;
       }
 
-      @media (max-width: 768px) {
-        .title {
-          font-size: 2rem;
-        }
+      /* 內容區塊 */
+      .content-card {
+        background: var(--white);
+        border: 1px solid #ccc;
+        border-radius: 15px;
+        padding: 30px;
+        width: 100%;
+        max-width: 600px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        min-height: 350px;
+      }
 
-        .character-container {
-          width: 100%;
-          height: 100%;
-          max-width: 360px;
-        }
+      .group {
+        display: none;
+      }
+      .group.active {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 15px;
+        animation: fadeIn 0.4s ease;
+      }
 
-        .character-base {
-          height: 340px;
-          width: 340px;
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
         }
-        .bg-layer img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.1));
+        to {
+          opacity: 1;
+          transform: translateY(0);
         }
+      }
+
+      .option {
+        width: 30%;
+
+        border: 3px solid #eee;
+        border-radius: 10px;
+        overflow: hidden;
+        cursor: pointer;
+        padding: 0;
+        background: white;
+        transition: 0.2s;
+      }
+
+      .option:hover {
+        border-color: var(--secondary);
+        transform: scale(1.05);
+      }
+      .option img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      /* 合成圖區域 */
+      .face-canvas {
+        position: relative;
+        width: 320px;
+        height: 370px;
+        background: #fafafa;
+        margin: 0 auto 20px;
+        border-radius: 20px;
+        border: 2px solid #eee;
+        overflow: hidden;
+      }
+
+      .face-canvas img {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+      }
+
+      /* 五官垂直位置微調 */
+      #img-eye {
+        top: 10%;
+        z-index: 1;
+      }
+      #img-nose {
+        top: 10%;
+        z-index: 2;
+      }
+      #img-mouth {
+        top: 10%;
+        z-index: 3;
+      }
+
+      .restart-btn {
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 12px 40px;
+        border-radius: 50px;
+        cursor: pointer;
+        font-size: 1rem;
+        display: block;
+        margin: 0 auto;
+        transition: 0.3s;
+      }
+
+      .restart-btn:hover {
+        background: var(--secondary);
+      }
+      .mt-5 {
+        margin-top: 2rem;
       }
     </style>
-    <!-- Google tag (gtag.js) -->
-    <script
-      async
-      src="https://www.googletagmanager.com/gtag/js?id=G-GM9J1RSZKF"
-    ></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      gtag("js", new Date());
-
-      gtag("config", "G-GM9J1RSZKF");
-    </script>
   </head>
   <body>
-    <script
-      async
-      src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3726552258466882"
-      crossorigin="anonymous"
-    ></script>
-    <!-- 衣櫃 -->
-    <ins
-      class="adsbygoogle"
-      style="display: block"
-      data-ad-client="ca-pub-3726552258466882"
-      data-ad-slot="4338320661"
-      data-ad-format="auto"
-      data-full-width-responsive="true"
-    ></ins>
-    <script>
-      (adsbygoogle = window.adsbygoogle || []).push({});
-    </script>
-    <div class="game-container">
-      <!-- <h1 class="title">海海穿什麼</h1>-->
+    <h1>Find Your SJ OPPA</h1>
 
-      <div class="character-container">
-        <!-- 背景層 -->
-        <div class="bg-layer background-layer">
-          <img
-            id="background-img"
-            src=""
-            alt="背景"
-            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-          />
-          <div class="placeholder-img" style="display: none">背景</div>
-        </div>
-        <div class="character-base">
-          <!-- 基礎人物 -->
-          <div class="character-layer base-character">
-            <img
-              id="base-img"
-              src="./img/dh.png"
-              alt="基礎人物"
-              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-            />
-            <div class="placeholder-img" style="display: none">
-              👤<br />基礎人物<br />
-            </div>
-          </div>
-          <!-- 鞋子層 -->
-          <div class="character-layer shoes-layer">
-            <img
-              id="shoes-img"
-              src=""
-              alt="鞋子"
-              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-            />
-            <div class="placeholder-img" style="display: none">
-              👟<br />鞋子
-            </div>
-          </div>
-
-          <!-- 褲子層 -->
-          <div class="character-layer pants-layer">
-            <img
-              id="pants-img"
-              src=""
-              alt="褲子"
-              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-            />
-            <div class="placeholder-img" style="display: none">
-              👖<br />褲子
-            </div>
-          </div>
-          <!-- 衣服層 -->
-          <div class="character-layer clothing-layer">
-            <img
-              id="clothing-img"
-              src=""
-              alt="衣服"
-              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-            />
-            <div class="placeholder-img" style="display: none">
-              👕<br />衣服
-            </div>
-          </div>
-          <!-- 配件層 -->
-          <div class="character-layer product-layer">
-            <img
-              id="product-img"
-              src=""
-              alt="配件"
-              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-            />
-            <div class="placeholder-img" style="display: none">
-              👕<br />配件
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="controls">
-        <div class="control-row">
-          <div class="control-label">衣服</div>
-          <div class="control-buttons">
-            <button class="control-btn" onclick="changeItem('clothing', -1)">
-              ←
-            </button>
-            <div class="item-name" id="clothing-name">樣式 1</div>
-            <button class="control-btn" onclick="changeItem('clothing', 1)">
-              →
-            </button>
-          </div>
-        </div>
-
-        <div class="control-row">
-          <div class="control-label">褲子</div>
-          <div class="control-buttons">
-            <button class="control-btn" onclick="changeItem('pants', -1)">
-              ←
-            </button>
-            <div class="item-name" id="pants-name">樣式 1</div>
-            <button class="control-btn" onclick="changeItem('pants', 1)">
-              →
-            </button>
-          </div>
-        </div>
-
-        <div class="control-row">
-          <div class="control-label">鞋子</div>
-          <div class="control-buttons">
-            <button class="control-btn" onclick="changeItem('shoes', -1)">
-              ←
-            </button>
-            <div class="item-name" id="shoes-name">樣式 1</div>
-            <button class="control-btn" onclick="changeItem('shoes', 1)">
-              →
-            </button>
-          </div>
-        </div>
-        <div class="control-row">
-          <div class="control-label">配件</div>
-          <div class="control-buttons">
-            <button class="control-btn" onclick="changeItem('product', -1)">
-              ←
-            </button>
-            <div class="item-name" id="product-name">樣式 1</div>
-            <button class="control-btn" onclick="changeItem('product', 1)">
-              →
-            </button>
-          </div>
-        </div>
-        <div class="control-row">
-          <div class="control-label">背景</div>
-          <div class="control-buttons">
-            <button class="control-btn" onclick="changeItem('background', -1)">
-              ←
-            </button>
-            <div class="item-name" id="background-name">樣式 1</div>
-            <button class="control-btn" onclick="changeItem('background', 1)">
-              →
-            </button>
-          </div>
-        </div>
-      </div>
+    <div class="tab-container">
+      <div class="tab active" id="tab1">眼睛</div>
+      <div class="tab" id="tab2">鼻子</div>
+      <div class="tab" id="tab3">嘴巴</div>
+      <div class="tab" id="tabResult">結果</div>
     </div>
 
-    <script
-      async
-      src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3726552258466882"
-      crossorigin="anonymous"
-    ></script>
-    <!-- 衣櫃 -->
-    <ins
-      class="adsbygoogle"
-      style="display: block"
-      data-ad-client="ca-pub-3726552258466882"
-      data-ad-slot="4338320661"
-      data-ad-format="auto"
-      data-full-width-responsive="true"
-    ></ins>
-    <script>
-      (adsbygoogle = window.adsbygoogle || []).push({});
-    </script>
+    <div class="content-card">
+      <div class="group active" id="group1" data-type="eyes">
+        <button class="option" onclick="selectPart(1, 'img/face/2.png', this)">
+          <img src="img/eye/1.png" />
+        </button>
+        <button class="option" onclick="selectPart(1, 'img/face/5.png', this)">
+          <img src="img/eye/2.png" />
+        </button>
+        <button class="option" onclick="selectPart(1, 'img/face/9.png', this)">
+          <img src="img/eye/3.png" />
+        </button>
+        <button class="option" onclick="selectPart(1, 'img/face/1.png', this)">
+          <img src="img/eye/4.png" />
+        </button>
+        <button class="option" onclick="selectPart(1, 'img/face/4.png', this)">
+          <img src="img/eye/5.png" />
+        </button>
+        <button class="option" onclick="selectPart(1, 'img/face/7.png', this)">
+          <img src="img/eye/6.png" />
+        </button>
+        <button class="option" onclick="selectPart(1, 'img/face/6.png', this)">
+          <img src="img/eye/7.png" />
+        </button>
+        <button class="option" onclick="selectPart(1, 'img/face/3.png', this)">
+          <img src="img/eye/8.png" />
+        </button>
+        <button class="option" onclick="selectPart(1, 'img/face/8.png', this)">
+          <img src="img/eye/9.png" />
+        </button>
+      </div>
+
+      <div class="group" id="group2" data-type="nose">
+        <button class="option" onclick="selectPart(2, 'img/nose/1.png', this)">
+          <img src="img/nose/big/1.png" />
+        </button>
+        <button class="option" onclick="selectPart(2, 'img/nose/2.png', this)">
+          <img src="img/nose/big/2.png" />
+        </button>
+        <button class="option" onclick="selectPart(2, 'img/nose/3.png', this)">
+          <img src="img/nose/big/3.png" />
+        </button>
+        <button class="option" onclick="selectPart(2, 'img/nose/4.png', this)">
+          <img src="img/nose/big/4.png" />
+        </button>
+        <button class="option" onclick="selectPart(2, 'img/nose/5.png', this)">
+          <img src="img/nose/big/5.png" />
+        </button>
+        <button class="option" onclick="selectPart(2, 'img/nose/6.png', this)">
+          <img src="img/nose/big/6.png" />
+        </button>
+        <button class="option" onclick="selectPart(2, 'img/nose/7.png', this)">
+          <img src="img/nose/big/7.png" />
+        </button>
+        <button class="option" onclick="selectPart(2, 'img/nose/8.png', this)">
+          <img src="img/nose/big/8.png" />
+        </button>
+        <button class="option" onclick="selectPart(2, 'img/nose/9.png', this)">
+          <img src="img/nose/big/9.png" />
+        </button>
+      </div>
+
+      <div class="group" id="group3" data-type="mouth">
+        <button class="option" onclick="selectPart(3, 'img/mouse/1.png', this)">
+          <img src="img/mouse/big/9.png" />
+        </button>
+        <button class="option" onclick="selectPart(3, 'img/mouse/2.png', this)">
+          <img src="img/mouse/big/8.png" />
+        </button>
+        <button class="option" onclick="selectPart(3, 'img/mouse/3.png', this)">
+          <img src="img/mouse/big/7.png" />
+        </button>
+        <button class="option" onclick="selectPart(3, 'img/mouse/4.png', this)">
+          <img src="img/mouse/big/6.png" />
+        </button>
+        <button class="option" onclick="selectPart(3, 'img/mouse/5.png', this)">
+          <img src="img/mouse/big/5.png" />
+        </button>
+        <button class="option" onclick="selectPart(3, 'img/mouse/6.png', this)">
+          <img src="img/mouse/big/4.png" />
+        </button>
+        <button class="option" onclick="selectPart(3, 'img/mouse/7.png', this)">
+          <img src="img/mouse/big/3.png" />
+        </button>
+        <button class="option" onclick="selectPart(3, 'img/mouse/8.png', this)">
+          <img src="img/mouse/big/2.png" />
+        </button>
+        <button class="option" onclick="selectPart(3, 'img/mouse/9.png', this)">
+          <img src="img/mouse/big/1.png" />
+        </button>
+      </div>
+
+      <div class="group" id="groupResult">
+        <div class="face-canvas">
+          <img id="img-eye" src="" />
+          <img id="img-nose" src="" />
+          <img id="img-mouth" src="" />
+        </div>
+      </div>
+      <button class="restart-btn mt-5" onclick="location.reload()">
+        重新組合
+      </button>
+    </div>
 
     <script>
-      // 圖片路徑配置 - 請根據你的圖片路徑修改
-      const items = {
-        base: [
-          "./img/dh.png", // 基礎人物圖片
-        ],
-        clothing: [
-          "./img/clothing/shirt1.png",
-          "./img/clothing/shirt2.png",
-          "./img/clothing/shirt3.png",
-          "./img/clothing/shirt4.png",
-          "./img/clothing/shirt5.png",
-        ],
-        pants: [
-          "./img/pants/shorts1.png",
-          "./img/pants/shorts2.png",
-          "./img/pants/jeans1.png",
-          "./img/pants/jeans2.png",
-          "./img/pants/jeans3.png",
-        ],
-        shoes: [
-          "./img/shoes/shoes1.png",
-          "./img/shoes/shoes2.png",
-          "./img/shoes/shoes3.png",
-          "./img/shoes/shoes4.png",
-          "./img/shoes/shoes5.png",
-        ],
-        product: [
-          "./img/product/products2.png",
-          "./img/product/products1.png",
-          "./img/product/products3.png",
-          "./img/product/products4.png",
-          "./img/product/products5.png",
-        ],
-        background: [
-          "./img/bg/bg1.png",
-          "./img/bg/bg2.png",
-          "./img/bg/bg3.png",
-          "./img/bg/bg4.png",
-          "./img/bg/bg5.png",
-        ],
+      const selections = { 1: null, 2: null, 3: null };
+
+      // 隨機洗牌函式
+      function shuffleElements(parentId) {
+        const parent = document.getElementById(parentId);
+        const items = Array.from(parent.children);
+        for (let i = items.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          parent.appendChild(items[j]);
+        }
+      }
+
+      // 初始化時洗牌第一組
+      window.onload = () => {
+        shuffleElements("group1");
       };
 
-      let currentIndex = {
-        clothing: 0,
-        pants: 0,
-        shoes: 0,
-        product: 0,
-        background: 0,
-      };
-
-      function changeItem(type, direction) {
-        const itemArray = items[type];
-        currentIndex[type] =
-          (currentIndex[type] + direction + itemArray.length) %
-          itemArray.length;
-
-        const imgElement = document.getElementById(type + "-img");
-        const nameElement = document.getElementById(type + "-name");
-        const placeholderElement = imgElement.nextElementSibling;
-
-        // 更新圖片源
-        imgElement.src = itemArray[currentIndex[type]];
-        imgElement.style.display = "block";
-        placeholderElement.style.display = "none";
-
-        // 更新名稱
-        nameElement.textContent = `樣式 ${currentIndex[type] + 1}`;
-
-        // 添加切換動畫
-        const layer = imgElement.parentElement;
-        layer.style.opacity = "1";
-        layer.style.transform = "scale(0.99)";
-
-        setTimeout(() => {
-          layer.style.opacity = "1";
-          layer.style.transform = "scale(1)";
-        }, 200);
-      }
-
-      // 處理圖片載入錯誤
-      function handleImageError(img, type) {
-        img.style.display = "none";
-        const placeholder = img.nextElementSibling;
-        placeholder.style.display = "flex";
-        placeholder.classList.add("image-error");
-        placeholder.innerHTML = `❌<br>${type}<br>圖片載入失敗`;
-      }
-
-      // 初始化
-      function init() {
-        // 設置基礎人物
-        const baseImg = document.getElementById("base-img");
-        baseImg.src = items.base[0];
-
-        // 初始化所有配件
-        changeItem("clothing", 0);
-        changeItem("pants", 0);
-        changeItem("shoes", 0);
-        changeItem("product", 0);
-        changeItem("background", 0);
-      }
-
-      // 為所有圖片添加錯誤處理
-      document.addEventListener("DOMContentLoaded", function () {
-        const baseImg = document.getElementById("base-img");
-        const clothingImg = document.getElementById("clothing-img");
-        const pantsImg = document.getElementById("pants-img");
-        const shoesImg = document.getElementById("shoes-img");
-        const productImg = document.getElementById("product-img");
-        const backgroundImg = document.getElementById("background-img");
-
-        baseImg.onerror = () => handleImageError(baseImg, "基礎人物");
-        clothingImg.onerror = () => handleImageError(clothingImg, "衣服");
-        pantsImg.onerror = () => handleImageError(pantsImg, "褲子");
-        shoesImg.onerror = () => handleImageError(shoesImg, "鞋子");
-        productImg.onerror = () => handleImageError(productImg, "配件");
-        backgroundImg.onerror = () => handleImageError(backgroundImg, "背景");
-
-        init();
-      });
-    </script>
-    <script>
-      (function () {
-        function c() {
-          var b = a.contentDocument || a.contentWindow.document;
-          if (b) {
-            var d = b.createElement("script");
-            d.innerHTML =
-              "window.__CF$cv$params={r:'981026bd6306f1f0',t:'MTc1ODE5MTI1Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";
-            b.getElementsByTagName("head")[0].appendChild(d);
-          }
+      function selectPart(step, imgPath, btn) {
+        selections[step] = imgPath;
+        if (step < 3) {
+          showTab(step + 1);
+        } else {
+          renderResult();
         }
-        if (document.body) {
-          var a = document.createElement("iframe");
-          a.height = 1;
-          a.width = 1;
-          a.style.position = "absolute";
-          a.style.top = 0;
-          a.style.left = 0;
-          a.style.border = "none";
-          a.style.visibility = "hidden";
-          document.body.appendChild(a);
-          if ("loading" !== document.readyState) c();
-          else if (window.addEventListener)
-            document.addEventListener("DOMContentLoaded", c);
-          else {
-            var e = document.onreadystatechange || function () {};
-            document.onreadystatechange = function (b) {
-              e(b);
-              "loading" !== document.readyState &&
-                ((document.onreadystatechange = e), c());
-            };
-          }
+      }
+
+      function showTab(step) {
+        document
+          .querySelectorAll(".group")
+          .forEach((g) => g.classList.remove("active"));
+        document
+          .querySelectorAll(".tab")
+          .forEach((t) => t.classList.remove("active"));
+
+        const targetId = step === "res" ? "Result" : step;
+        const targetGroup = document.getElementById("group" + targetId);
+
+        // 每次切換分頁時自動洗牌
+        if (step !== "res") {
+          shuffleElements("group" + step);
         }
-      })();
+
+        targetGroup.classList.add("active");
+        document.getElementById("tab" + targetId).classList.add("active");
+      }
+
+      function renderResult() {
+        // 修正：將選中的 data-img 路徑賦值給結果圖片的 src
+        document.getElementById("img-eye").src = selections[1];
+        document.getElementById("img-nose").src = selections[2];
+        document.getElementById("img-mouth").src = selections[3];
+
+        showTab("res");
+        document.querySelector("h1").innerText = "你的OPPA來了！";
+      }
     </script>
   </body>
 </html>
