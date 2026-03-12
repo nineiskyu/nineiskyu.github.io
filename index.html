@@ -1,1093 +1,347 @@
 <!doctype html>
-<html lang="zh-Hant">
+<html lang="zh-TW">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>海圭湯訂單明細</title>
+    <title>拼出SJ</title>
+    <link rel="”icon”" href="/icon.png" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
     <style>
-      * {
-        box-sizing: border-box;
+      :root {
+        --primary: #1a3263; /* 深藍 */
+        --secondary: #547792; /* 灰藍 */
+        --accent: #fab95b; /* 暖金 */
+        --bg: #e8e2db; /* 米白 */
+        --white: #ffffff;
       }
 
       body {
-        margin: 0;
-        font-family: "Microsoft JhengHei", Arial, sans-serif;
-        background: #f5f6fb;
-        color: #333;
-      }
-
-      .container {
-        max-width: 1100px;
-        margin: 0 auto;
-        padding: 32px 20px 48px;
-      }
-
-      .title {
-        text-align: center;
-        font-size: 32px;
-        margin: 0 0 28px;
-        color: #222;
-      }
-
-      .card-list {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-        gap: 22px;
-      }
-
-      .order-card {
-        background: #fff;
-        border-radius: 18px;
-        padding: 22px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-        border: 1px solid #ececf3;
-      }
-
-      .info-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        gap: 12px;
-        margin-bottom: 10px;
-        font-size: 16px;
-      }
-
-      .label {
-        color: #666;
-        flex-shrink: 0;
-      }
-
-      .value {
-        color: #111;
-        text-align: right;
-        word-break: break-word;
-      }
-
-      .number {
-        font-weight: 700;
-        color: #555;
-      }
-
-      .name {
-        font-weight: 700;
-        color: #111;
-      }
-
-      .final-payment {
-        color: #d93025;
-        font-weight: 700;
-      }
-
-      .divider {
-        border: none;
-        border-top: 1px dashed #cfcfda;
-        margin: 16px 0;
-      }
-
-      .item-list,
-      .card-info-list {
+        font-family: "Noto Sans TC", sans-serif;
+        background-color: var(--bg);
+        color: var(--primary);
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        align-items: center;
+        padding: 40px 20px;
+        margin: 0;
       }
 
-      .item {
+      h1 {
+        margin-bottom: 30px;
+        letter-spacing: 2px;
+        text-align: center;
+      }
+
+      /* Tab 導航列 */
+      .tab-container {
         display: flex;
-        align-items: flex-start;
-        gap: 10px;
-        line-height: 1.5;
+        gap: 5px;
+        margin-bottom: -1px;
+        z-index: 2;
       }
 
-      .item input[type="checkbox"] {
-        width: 18px;
-        height: 18px;
-        margin-top: 2px;
-        flex-shrink: 0;
+      .tab {
+        padding: 12px 20px;
+        background: rgba(255, 255, 255, 0.5);
+        border: 1px solid #ccc;
+        border-bottom: none;
+        border-radius: 12px 12px 0 0;
         cursor: pointer;
+        color: var(--secondary);
+        font-weight: bold;
+        transition: 0.3s;
+        font-size: 0.9rem;
       }
 
-      .item-text {
-        flex: 1;
-        word-break: break-word;
+      .tab.active {
+        background: var(--white);
+        color: var(--primary);
+        border-top: 5px solid var(--primary);
+        padding-bottom: 13px;
       }
 
-      .item.done .item-text {
-        color: #999;
-        text-decoration: line-through;
+      /* 內容區塊 */
+      .content-card {
+        background: var(--white);
+        border: 1px solid #ccc;
+        border-radius: 15px;
+        padding: 30px;
+        width: 100%;
+        max-width: 600px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        min-height: 350px;
       }
 
-      @media (max-width: 576px) {
-        .title {
-          font-size: 26px;
-        }
+      .group {
+        display: none;
+      }
+      .group.active {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 15px;
+        animation: fadeIn 0.4s ease;
+      }
 
-        .order-card {
-          padding: 18px;
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
         }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
 
-        .info-row {
-          font-size: 15px;
-        }
+      .option {
+        width: 30%;
+
+        border: 3px solid #eee;
+        border-radius: 10px;
+        overflow: hidden;
+        cursor: pointer;
+        padding: 0;
+        background: white;
+        transition: 0.2s;
+      }
+
+      .option:hover {
+        border-color: var(--secondary);
+        transform: scale(1.05);
+      }
+      .option img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      /* 合成圖區域 */
+      .face-canvas {
+        position: relative;
+        width: 320px;
+        height: 370px;
+        background: #fafafa;
+        margin: 0 auto 20px;
+        border-radius: 20px;
+        border: 2px solid #eee;
+        overflow: hidden;
+      }
+
+      .face-canvas img {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+      }
+
+      /* 五官垂直位置微調 */
+      #img-eye {
+        top: 10%;
+        z-index: 1;
+      }
+      #img-nose {
+        top: 10%;
+        z-index: 2;
+      }
+      #img-mouth {
+        top: 10%;
+        z-index: 3;
+      }
+
+      .restart-btn {
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 12px 40px;
+        border-radius: 50px;
+        cursor: pointer;
+        font-size: 1rem;
+        display: block;
+        margin: 0 auto;
+        transition: 0.3s;
+      }
+
+      .restart-btn:hover {
+        background: var(--secondary);
+      }
+      .mt-5 {
+        margin-top: 2rem;
       }
     </style>
   </head>
   <body>
-    <div class="container">
-      <h1 class="title">代購清單</h1>
-      <div id="cardList" class="card-list"></div>
+    <h1>Find Your SJ OPPA</h1>
+
+    <div class="tab-container">
+      <div class="tab active" id="tab1">眼睛</div>
+      <div class="tab" id="tab2">鼻子</div>
+      <div class="tab" id="tab3">嘴巴</div>
+      <div class="tab" id="tabResult">結果</div>
+    </div>
+
+    <div class="content-card">
+      <div class="group active" id="group1" data-type="eyes">
+        <button class="option" onclick="selectPart(1, 'img/face/2.png', this)">
+          <img src="img/eye/1.png" />
+        </button>
+        <button class="option" onclick="selectPart(1, 'img/face/5.png', this)">
+          <img src="img/eye/2.png" />
+        </button>
+        <button class="option" onclick="selectPart(1, 'img/face/9.png', this)">
+          <img src="img/eye/3.png" />
+        </button>
+        <button class="option" onclick="selectPart(1, 'img/face/1.png', this)">
+          <img src="img/eye/4.png" />
+        </button>
+        <button class="option" onclick="selectPart(1, 'img/face/4.png', this)">
+          <img src="img/eye/5.png" />
+        </button>
+        <button class="option" onclick="selectPart(1, 'img/face/7.png', this)">
+          <img src="img/eye/6.png" />
+        </button>
+        <button class="option" onclick="selectPart(1, 'img/face/6.png', this)">
+          <img src="img/eye/7.png" />
+        </button>
+        <button class="option" onclick="selectPart(1, 'img/face/3.png', this)">
+          <img src="img/eye/8.png" />
+        </button>
+        <button class="option" onclick="selectPart(1, 'img/face/8.png', this)">
+          <img src="img/eye/9.png" />
+        </button>
+      </div>
+
+      <div class="group" id="group2" data-type="nose">
+        <button class="option" onclick="selectPart(2, 'img/nose/1.png', this)">
+          <img src="img/nose/big/1.png" />
+        </button>
+        <button class="option" onclick="selectPart(2, 'img/nose/2.png', this)">
+          <img src="img/nose/big/2.png" />
+        </button>
+        <button class="option" onclick="selectPart(2, 'img/nose/3.png', this)">
+          <img src="img/nose/big/3.png" />
+        </button>
+        <button class="option" onclick="selectPart(2, 'img/nose/4.png', this)">
+          <img src="img/nose/big/4.png" />
+        </button>
+        <button class="option" onclick="selectPart(2, 'img/nose/5.png', this)">
+          <img src="img/nose/big/5.png" />
+        </button>
+        <button class="option" onclick="selectPart(2, 'img/nose/6.png', this)">
+          <img src="img/nose/big/6.png" />
+        </button>
+        <button class="option" onclick="selectPart(2, 'img/nose/7.png', this)">
+          <img src="img/nose/big/7.png" />
+        </button>
+        <button class="option" onclick="selectPart(2, 'img/nose/8.png', this)">
+          <img src="img/nose/big/8.png" />
+        </button>
+        <button class="option" onclick="selectPart(2, 'img/nose/9.png', this)">
+          <img src="img/nose/big/9.png" />
+        </button>
+      </div>
+
+      <div class="group" id="group3" data-type="mouth">
+        <button class="option" onclick="selectPart(3, 'img/mouse/1.png', this)">
+          <img src="img/mouse/big/9.png" />
+        </button>
+        <button class="option" onclick="selectPart(3, 'img/mouse/2.png', this)">
+          <img src="img/mouse/big/8.png" />
+        </button>
+        <button class="option" onclick="selectPart(3, 'img/mouse/3.png', this)">
+          <img src="img/mouse/big/7.png" />
+        </button>
+        <button class="option" onclick="selectPart(3, 'img/mouse/4.png', this)">
+          <img src="img/mouse/big/6.png" />
+        </button>
+        <button class="option" onclick="selectPart(3, 'img/mouse/5.png', this)">
+          <img src="img/mouse/big/5.png" />
+        </button>
+        <button class="option" onclick="selectPart(3, 'img/mouse/6.png', this)">
+          <img src="img/mouse/big/4.png" />
+        </button>
+        <button class="option" onclick="selectPart(3, 'img/mouse/7.png', this)">
+          <img src="img/mouse/big/3.png" />
+        </button>
+        <button class="option" onclick="selectPart(3, 'img/mouse/8.png', this)">
+          <img src="img/mouse/big/2.png" />
+        </button>
+        <button class="option" onclick="selectPart(3, 'img/mouse/9.png', this)">
+          <img src="img/mouse/big/1.png" />
+        </button>
+      </div>
+
+      <div class="group" id="groupResult">
+        <div class="face-canvas">
+          <img id="img-eye" src="" />
+          <img id="img-nose" src="" />
+          <img id="img-mouth" src="" />
+        </div>
+      </div>
+      <button class="restart-btn mt-5" onclick="location.reload()">
+        重新組合
+      </button>
     </div>
 
     <script>
-      const orderData = [
-        {
-          name: "33",
-          totalAmount: 1950,
-          deposit: 500,
-          finalPayment: 1450,
-          eventCard: 0,
-          marketCard: 0,
-          items: [
-            "特超市壓克力立牌 $750",
-            "特姓名牌 $500",
-            "隨機卡包(18款) $250",
-            "蛋糕 澈",
-          ],
-        },
-        {
-          name: "77",
-          totalAmount: 1840,
-          deposit: 500,
-          finalPayment: 1340,
-          eventCard: 0,
-          marketCard: 0,
-          items: ["海玩偶吊飾", "圭玩偶吊飾"],
-        },
-        {
-          name: "Anissa",
-          totalAmount: 750,
-          deposit: 500,
-          finalPayment: 250,
-          eventCard: 0,
-          marketCard: 0,
-          items: ["海超市壓克力立牌 $750"],
-        },
-        {
-          name: "CHCC",
-          totalAmount: 520,
-          deposit: 0,
-          finalPayment: 520,
-          eventCard: 0,
-          marketCard: 0,
-          items: ["雨傘識別吊飾 海"],
-        },
-        {
-          name: "Chu chu",
-          totalAmount: 300,
-          deposit: 0,
-          finalPayment: 300,
-          eventCard: 0,
-          marketCard: 0,
-          items: ["小熊 旭"],
-        },
-        {
-          name: "Cindy💙東海",
-          totalAmount: 1500,
-          deposit: 500,
-          finalPayment: 1000,
-          eventCard: 0,
-          marketCard: 0,
-          items: [
-            "海超市壓克力立牌 $750",
-            "海姓名牌 $500",
-            "隨機卡包(18款) $250",
-          ],
-        },
-        {
-          name: "Demiii",
-          totalAmount: 1800,
-          deposit: 1000,
-          finalPayment: 800,
-          eventCard: 0,
-          marketCard: 0,
-          items: [
-            "赫超市壓克力立牌 $750",
-            "赫姓名牌 $500",
-            "隨機卡包(18款) $250",
-            "小熊 海",
-          ],
-        },
-        {
-          name: "Doris",
-          totalAmount: 4680,
-          deposit: 1000,
-          finalPayment: 3680,
-          eventCard: 1,
-          marketCard: 0,
-          items: [
-            "赫旗幟",
-            "海旗幟",
-            "赫玩偶吊飾",
-            "海玩偶吊飾",
-            "小熊 特",
-            "玩偶吊飾 旭",
-            "扭蛋手帕 赫",
-          ],
-        },
-        {
-          name: "Ellie",
-          totalAmount: 5500,
-          deposit: 2000,
-          finalPayment: 3500,
-          eventCard: 0,
-          marketCard: 2,
-          items: [
-            "T恤 $1300",
-            "半拉鍊長袖 $2700",
-            "海超市壓克力立牌 $750",
-            "海姓名牌 $500",
-            "隨機卡包(18款) $250",
-          ],
-        },
-        {
-          name: "Erikaaa🤍",
-          totalAmount: 920,
-          deposit: 500,
-          finalPayment: 420,
-          eventCard: 0,
-          marketCard: 0,
-          items: ["源玩偶吊飾"],
-        },
-        {
-          name: "Fayeeee",
-          totalAmount: 2290,
-          deposit: 500,
-          finalPayment: 1790,
-          eventCard: 0,
-          marketCard: 0,
-          items: ["赫玩偶吊飾", "海玩偶吊飾", "蛋糕 童"],
-        },
-        {
-          name: "Hsuanna",
-          totalAmount: 4600,
-          deposit: 500,
-          finalPayment: 4100,
-          eventCard: 0,
-          marketCard: 0,
-          items: [
-            "隨機卡包(18款) $250",
-            "小熊 童",
-            "小熊 海",
-            "扇套 圭",
-            "玩偶吊飾 旭",
-            "大頭吊飾 圭",
-            "沐浴球 特",
-          ],
-        },
-        {
-          name: "Hsuan💙",
-          totalAmount: 1950,
-          deposit: 500,
-          finalPayment: 1450,
-          eventCard: 0,
-          marketCard: 0,
-          items: ["T恤L", "海手燈裝飾"],
-        },
-        {
-          name: "Joy",
-          totalAmount: 1840,
-          deposit: 1000,
-          finalPayment: 840,
-          eventCard: 0,
-          marketCard: 0,
-          items: ["特玩偶吊飾", "旭玩偶吊飾"],
-        },
-        {
-          name: "KELE",
-          totalAmount: 2760,
-          deposit: 500,
-          finalPayment: 2260,
-          eventCard: 0,
-          marketCard: 0,
-          items: ["特玩偶吊飾", "澈玩偶吊飾", "玩偶吊飾 旭"],
-        },
-        {
-          name: "LAM",
-          totalAmount: 4040,
-          deposit: 2000,
-          finalPayment: 2040,
-          eventCard: 2,
-          marketCard: 0,
-          items: [
-            "制服鑰匙吊飾",
-            "澈手燈裝飾",
-            "海手燈裝飾",
-            "澈玩偶吊飾",
-            "海玩偶吊飾",
-          ],
-        },
-        {
-          name: "Lu❣️",
-          totalAmount: 1000,
-          deposit: 500,
-          finalPayment: 500,
-          eventCard: 0,
-          marketCard: 0,
-          items: ["澈超市壓克力立牌 $750", "隨機卡包(18款) $250"],
-        },
-        {
-          name: "Maggieeeee",
-          totalAmount: 3510,
-          deposit: 500,
-          finalPayment: 3010,
-          eventCard: 0,
-          marketCard: 0,
-          items: [
-            "雲玩偶吊飾",
-            "海玩偶吊飾",
-            "玩偶吊飾 圭",
-            "超市壓克力立牌 圭",
-          ],
-        },
-        {
-          name: "Peg",
-          totalAmount: 2940,
-          deposit: 1000,
-          finalPayment: 1940,
-          eventCard: 0,
-          marketCard: 0,
-          items: [
-            "特玩偶吊飾",
-            "旭玩偶吊飾",
-            "海大頭吊飾+隨",
-            "海證件照兩入+隨",
-          ],
-        },
-        {
-          name: "Pちゃん",
-          totalAmount: 300,
-          deposit: 0,
-          finalPayment: 300,
-          eventCard: 0,
-          marketCard: 0,
-          items: ["小熊 側臉澈"],
-        },
-        {
-          name: "Ruby",
-          totalAmount: 1840,
-          deposit: 500,
-          finalPayment: 1340,
-          eventCard: 0,
-          marketCard: 0,
-          items: ["源玩偶吊飾", "旭玩偶吊飾"],
-        },
-        {
-          name: "SUSU",
-          totalAmount: 1000,
-          deposit: 500,
-          finalPayment: 500,
-          eventCard: 0,
-          marketCard: 0,
-          items: ["源超市壓克力立牌 $750", "隨機卡包(18款) $250"],
-        },
-        {
-          name: "Shihan",
-          totalAmount: 1840,
-          deposit: 500,
-          finalPayment: 1340,
-          eventCard: 0,
-          marketCard: 0,
-          items: ["赫玩偶吊飾", "圭玩偶吊飾"],
-        },
-        {
-          name: "Sienna",
-          totalAmount: 920,
-          deposit: 500,
-          finalPayment: 420,
-          eventCard: 0,
-          marketCard: 0,
-          items: ["特玩偶吊飾"],
-        },
-        {
-          name: "Sizzzza",
-          totalAmount: 920,
-          deposit: 0,
-          finalPayment: 920,
-          eventCard: 0,
-          marketCard: 0,
-          items: ["玩偶吊飾 旭"],
-        },
-        {
-          name: "TingTing",
-          totalAmount: 1500,
-          deposit: 1500,
-          finalPayment: 0,
-          eventCard: 0,
-          marketCard: 0,
-          items: [
-            "源玩偶吊飾",
-            "海扇套",
-            "海超市壓克力立牌 $750",
-            "海姓名牌 $500",
-            "隨機卡包(18款) $250",
-            "玩偶吊飾 圭",
-          ],
-        },
-        {
-          name: "UUU",
-          totalAmount: 1840,
-          deposit: 1500,
-          finalPayment: 340,
-          eventCard: 1,
-          marketCard: 0,
-          items: ["澈玩偶吊飾", "雲玩偶吊飾"],
-        },
-        {
-          name: "WR",
-          totalAmount: 3440,
-          deposit: 1000,
-          finalPayment: 2440,
-          eventCard: 0,
-          marketCard: 0,
-          items: ["T恤M", "雲玩偶吊飾", "圭玩偶吊飾", "小熊 圭"],
-        },
-        {
-          name: "Wen",
-          totalAmount: 3720,
-          deposit: 2000,
-          finalPayment: 1720,
-          eventCard: 1,
-          marketCard: 0,
-          items: [
-            "T恤L",
-            "源玩偶吊飾",
-            "澈超市壓克力立牌 $750",
-            "澈姓名牌 $500",
-            "隨機卡包(18款) $250",
-          ],
-        },
-        {
-          name: "YiHsuan",
-          totalAmount: 920,
-          deposit: 0,
-          finalPayment: 920,
-          eventCard: 1,
-          marketCard: 0,
-          items: ["玩偶吊飾 圭"],
-        },
-        {
-          name: "annx026",
-          totalAmount: 2260,
-          deposit: 1000,
-          finalPayment: 1260,
-          eventCard: 0,
-          marketCard: 0,
-          items: ["澈玩偶吊飾", "赫玩偶吊飾", "扇子 海"],
-        },
-        {
-          name: "chienju",
-          totalAmount: 4010,
-          deposit: 500,
-          finalPayment: 3510,
-          eventCard: 0,
-          marketCard: 0,
-          items: ["雲玩偶吊飾", "海玩偶吊飾", "玩偶吊飾 雲", "扇套 雲"],
-        },
-        {
-          name: "cindy",
-          totalAmount: 6440,
-          deposit: 2000,
-          finalPayment: 4440,
-          eventCard: 0,
-          marketCard: 0,
-          items: [
-            "提袋",
-            "澈玩偶吊飾",
-            "旭玩偶吊飾",
-            "海扇套",
-            "旭扇套",
-            "雲大頭吊飾+隨",
-            "蛋糕 圭",
-          ],
-        },
-        {
-          name: "hui🍓",
-          totalAmount: 1250,
-          deposit: 0,
-          finalPayment: 1250,
-          eventCard: 2,
-          marketCard: 0,
-          items: ["扇套 源"],
-        },
-        {
-          name: "hyuk0.404",
-          totalAmount: 450,
-          deposit: 0,
-          finalPayment: 450,
-          eventCard: 0,
-          marketCard: 0,
-          items: ["蛋糕 海"],
-        },
-        {
-          name: "jiji.H",
-          totalAmount: 1840,
-          deposit: 500,
-          finalPayment: 1340,
-          eventCard: 0,
-          marketCard: 0,
-          items: ["赫玩偶吊飾", "海玩偶吊飾"],
-        },
-        {
-          name: "kim jing🍒",
-          totalAmount: 520,
-          deposit: 0,
-          finalPayment: 520,
-          eventCard: 0,
-          marketCard: 0,
-          items: ["扭蛋手帕 澈"],
-        },
-        {
-          name: "noQ",
-          totalAmount: 6610,
-          deposit: 3000,
-          finalPayment: 3610,
-          eventCard: 0,
-          marketCard: 0,
-          items: [
-            "提袋",
-            "雲發光立牌",
-            "雲玩偶吊飾",
-            "海玩偶吊飾",
-            "赫扇套",
-            "赫超市壓克力立牌 $750",
-            "赫姓名牌 $500",
-            "隨機卡包(18款) $250",
-          ],
-        },
-        {
-          name: "rouuu",
-          totalAmount: 3020,
-          deposit: 1000,
-          finalPayment: 2020,
-          eventCard: 2,
-          marketCard: 0,
-          items: [
-            "海超市壓克力立牌 $750",
-            "海姓名牌 $500",
-            "隨機卡包(18款) $250",
-            "玩偶吊飾 赫",
-            "沐浴球 海",
-          ],
-        },
-        {
-          name: "tingting",
-          totalAmount: 3090,
-          deposit: 1500,
-          finalPayment: 1590,
-          eventCard: 0,
-          marketCard: 0,
-          items: [
-            "源玩偶吊飾",
-            "海扇套",
-            "海超市壓克力立牌 $750",
-            "海姓名牌 $500",
-            "隨機卡包(18款) $250",
-            "玩偶吊飾 圭",
-          ],
-        },
-        {
-          name: "zfang",
-          totalAmount: 1750,
-          deposit: 500,
-          finalPayment: 1250,
-          eventCard: 1,
-          marketCard: 0,
-          items: ["T恤M", "蛋糕 旭"],
-        },
-        {
-          name: "zoe",
-          totalAmount: 2940,
-          deposit: 1000,
-          finalPayment: 1940,
-          eventCard: 0,
-          marketCard: 0,
-          items: [
-            "澈玩偶吊飾",
-            "澈大頭吊飾+隨",
-            "澈證件照兩入+隨",
-            "玩偶吊飾 圭",
-          ],
-        },
-        {
-          name: "☁️",
-          totalAmount: 1840,
-          deposit: 500,
-          finalPayment: 1340,
-          eventCard: 0,
-          marketCard: 0,
-          items: ["赫玩偶吊飾", "海玩偶吊飾"],
-        },
-        {
-          name: "☁️芸🐈‍⬛",
-          totalAmount: 2000,
-          deposit: 500,
-          finalPayment: 1500,
-          eventCard: 0,
-          marketCard: 0,
-          items: ["雲超市壓克力立牌 $750", "扇套 圭"],
-        },
-        {
-          name: "☁️🌊💙",
-          totalAmount: 1000,
-          deposit: 1000,
-          finalPayment: 0,
-          eventCard: 0,
-          marketCard: 0,
-          items: ["雲超市壓克力立牌 $750", "隨機卡包(18款) $250"],
-        },
-        {
-          name: "✨Annie💙",
-          totalAmount: 3090,
-          deposit: 1000,
-          finalPayment: 2090,
-          eventCard: 0,
-          marketCard: 0,
-          items: [
-            "澈玩偶吊飾",
-            "赫超市壓克力立牌 $750",
-            "赫姓名牌 $500",
-            "玩偶吊飾 旭",
-          ],
-        },
-        {
-          name: "兔兔",
-          totalAmount: 2600,
-          deposit: 1500,
-          finalPayment: 1100,
-          eventCard: 0,
-          marketCard: 0,
-          items: [
-            "澈大頭吊飾+隨",
-            "澈證件照兩入+隨",
-            "澈超市壓克力立牌 $750",
-            "澈姓名牌 $500",
-            "隨機卡包(18款) $250",
-          ],
-        },
-        {
-          name: "咪呼",
-          totalAmount: 920,
-          deposit: 0,
-          finalPayment: 920,
-          eventCard: 0,
-          marketCard: 0,
-          items: ["玩偶吊飾 特"],
-        },
-        {
-          name: "咪咪咪咪",
-          totalAmount: 300,
-          deposit: 0,
-          finalPayment: 300,
-          eventCard: 0,
-          marketCard: 0,
-          items: ["小熊 正臉澈"],
-        },
-        {
-          name: "圈",
-          totalAmount: 450,
-          deposit: 0,
-          finalPayment: 450,
-          eventCard: 0,
-          marketCard: 0,
-          items: ["蛋糕 海"],
-        },
-        {
-          name: "圭比特",
-          totalAmount: 1500,
-          deposit: 1000,
-          finalPayment: 500,
-          eventCard: 0,
-          marketCard: 0,
-          items: [
-            "圭超市壓克力立牌 $750",
-            "圭姓名牌 $500",
-            "隨機卡包(18款) $250",
-          ],
-        },
-        {
-          name: "妏",
-          totalAmount: 3090,
-          deposit: 1000,
-          finalPayment: 2090,
-          eventCard: 0,
-          marketCard: 0,
-          items: [
-            "特玩偶吊飾",
-            "澈玩偶吊飾",
-            "雲超市壓克力立牌 $750",
-            "赫姓名牌 $500",
-          ],
-        },
-        {
-          name: "娜娜",
-          totalAmount: 3390,
-          deposit: 1500,
-          finalPayment: 1890,
-          eventCard: 0,
-          marketCard: 0,
-          items: ["T恤L", "特玩偶吊飾", "雲玩偶吊飾", "隨機卡包(18款) $250"],
-        },
-        {
-          name: "安",
-          totalAmount: 2020,
-          deposit: 1000,
-          finalPayment: 1020,
-          eventCard: 1,
-          marketCard: 0,
-          items: [
-            "雲超市壓克力立牌 $750",
-            "雲姓名牌 $500",
-            "隨機卡包(18款) $250",
-            "扭蛋手帕 雲",
-          ],
-        },
-        {
-          name: "小狗",
-          totalAmount: 1000,
-          deposit: 500,
-          finalPayment: 500,
-          eventCard: 0,
-          marketCard: 0,
-          items: ["赫超市壓克力立牌 $750", "隨機卡包(18款) $250"],
-        },
-        {
-          name: "小田",
-          totalAmount: 1840,
-          deposit: 500,
-          finalPayment: 1340,
-          eventCard: 0,
-          marketCard: 0,
-          items: ["源玩偶吊飾", "圭玩偶吊飾"],
-        },
-        {
-          name: "小雅",
-          totalAmount: 920,
-          deposit: 500,
-          finalPayment: 420,
-          eventCard: 0,
-          marketCard: 0,
-          items: ["雲玩偶吊飾"],
-        },
-        {
-          name: "明",
-          totalAmount: 1250,
-          deposit: 0,
-          finalPayment: 1250,
-          eventCard: 0,
-          marketCard: 0,
-          items: ["扇套 特"],
-        },
-        {
-          name: "朴海萌",
-          totalAmount: 300,
-          deposit: 0,
-          finalPayment: 300,
-          eventCard: 0,
-          marketCard: 0,
-          items: ["小熊 童比一"],
-        },
-        {
-          name: "泡芙💙",
-          totalAmount: 3310,
-          deposit: 1000,
-          finalPayment: 2310,
-          eventCard: 0,
-          marketCard: 0,
-          items: ["源玩偶吊飾", "旭玩偶吊飾", "海大頭吊飾+隨", "玩偶吊飾 圭"],
-        },
-        {
-          name: "滿滿",
-          totalAmount: 1840,
-          deposit: 500,
-          finalPayment: 1340,
-          eventCard: 0,
-          marketCard: 0,
-          items: ["澈玩偶吊飾", "雲玩偶吊飾"],
-        },
-        {
-          name: "瓦特",
-          totalAmount: 1840,
-          deposit: 500,
-          finalPayment: 1340,
-          eventCard: 0,
-          marketCard: 0,
-          items: ["赫玩偶吊飾", "海玩偶吊飾"],
-        },
-        {
-          name: "石田",
-          totalAmount: 920,
-          deposit: 500,
-          finalPayment: 420,
-          eventCard: 0,
-          marketCard: 0,
-          items: ["特玩偶吊飾"],
-        },
-        {
-          name: "米娜",
-          totalAmount: 5410,
-          deposit: 1000,
-          finalPayment: 4410,
-          eventCard: 0,
-          marketCard: 0,
-          items: [
-            "澈手燈裝飾",
-            "雲手燈裝飾",
-            "特玩偶吊飾",
-            "源玩偶吊飾",
-            "隨機扭蛋 $240",
-            "扇套 旭",
-            "大頭吊飾 特",
-          ],
-        },
-        {
-          name: "羊羊💙",
-          totalAmount: 1840,
-          deposit: 500,
-          finalPayment: 1340,
-          eventCard: 1,
-          marketCard: 0,
-          items: ["赫玩偶吊飾", "海玩偶吊飾"],
-        },
-        {
-          name: "聲",
-          totalAmount: 3140,
-          deposit: 1000,
-          finalPayment: 2140,
-          eventCard: 0,
-          marketCard: 0,
-          items: ["T恤L", "澈玩偶吊飾", "雲玩偶吊飾"],
-        },
-        {
-          name: "芋頭💙",
-          totalAmount: 2260,
-          deposit: 1000,
-          finalPayment: 1260,
-          eventCard: 1,
-          marketCard: 0,
-          items: ["海扇子", "赫玩偶吊飾", "海玩偶吊飾"],
-        },
-        {
-          name: "蕭RY",
-          totalAmount: 1250,
-          deposit: 0,
-          finalPayment: 1250,
-          eventCard: 1,
-          marketCard: 0,
-          items: ["扇套 雲"],
-        },
-        {
-          name: "蹦揪",
-          totalAmount: 1500,
-          deposit: 500,
-          finalPayment: 1000,
-          eventCard: 0,
-          marketCard: 0,
-          items: [
-            "澈超市壓克力立牌 $750",
-            "澈姓名牌 $500",
-            "隨機卡包(18款) $250",
-          ],
-        },
-        {
-          name: "金金",
-          totalAmount: 2780,
-          deposit: 1000,
-          finalPayment: 1780,
-          eventCard: 0,
-          marketCard: 0,
-          items: ["特扇子", "源玩偶吊飾", "旭玩偶吊飾", "胸針徽章"],
-        },
-        {
-          name: "阿派",
-          totalAmount: 3340,
-          deposit: 1000,
-          finalPayment: 2340,
-          eventCard: 1,
-          marketCard: 0,
-          items: [
-            "圭扇子",
-            "圭玩偶吊飾",
-            "圭姓名牌 $500",
-            "隨機卡包(18款) $250",
-            "扇套 旭",
-          ],
-        },
-        {
-          name: "雲",
-          totalAmount: 520,
-          deposit: 0,
-          finalPayment: 520,
-          eventCard: 0,
-          marketCard: 0,
-          items: ["扭蛋手帕 雲"],
-        },
-        {
-          name: "高粱💙",
-          totalAmount: 9550,
-          deposit: 2000,
-          finalPayment: 7550,
-          eventCard: 0,
-          marketCard: 0,
-          items: [
-            "T恤L",
-            "特玩偶吊飾",
-            "T恤 $1300",
-            "雲超市壓克力立牌 $750",
-            "雲姓名牌 $500",
-            "隨機卡包(18款) $250",
-            "扇子 赫",
-            "發光立牌 海",
-            "扇套 雲",
-            "玩偶吊飾 圭",
-            "超市姓名牌 海",
-            "扭蛋手帕 澈",
-          ],
-        },
-        {
-          name: "黑",
-          totalAmount: 1840,
-          deposit: 500,
-          finalPayment: 1340,
-          eventCard: 1,
-          marketCard: 1,
-          items: ["源玩偶吊飾", "玩偶吊飾 特"],
-        },
-        {
-          name: "🍒aaa🦄",
-          totalAmount: 1750,
-          deposit: 500,
-          finalPayment: 1250,
-          eventCard: 0,
-          marketCard: 0,
-          items: [
-            "源超市壓克力立牌 $750",
-            "隨機卡包(18款) $250",
-            "蛋糕 源",
-            "小熊 圭",
-          ],
-        },
-      ];
+      const selections = { 1: null, 2: null, 3: null };
 
-      const cardList = document.getElementById("cardList");
-
-      function formatMoney(num) {
-        return Number(num).toLocaleString("zh-TW");
+      // 隨機洗牌函式
+      function shuffleElements(parentId) {
+        const parent = document.getElementById(parentId);
+        const items = Array.from(parent.children);
+        for (let i = items.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          parent.appendChild(items[j]);
+        }
       }
 
-      function groupItems(items) {
-        const grouped = {};
+      // 初始化時洗牌第一組
+      window.onload = () => {
+        shuffleElements("group1");
+      };
 
-        items.forEach((item) => {
-          const match = item.match(/\$([\d,]+)/);
-          const price = match ? Number(match[1].replace(/,/g, "")) : null;
-          const name = item.replace(/\s*\$[\d,]+\s*$/, "").trim();
-          const key = `${name}__${price ?? "no-price"}`;
-
-          if (!grouped[key]) {
-            grouped[key] = {
-              name,
-              price,
-              qty: 1,
-            };
-          } else {
-            grouped[key].qty += 1;
-          }
-        });
-
-        return Object.values(grouped);
+      function selectPart(step, imgPath, btn) {
+        selections[step] = imgPath;
+        if (step < 3) {
+          showTab(step + 1);
+        } else {
+          renderResult();
+        }
       }
 
-      function createItemHtml(item) {
-        let text = item.name;
+      function showTab(step) {
+        document
+          .querySelectorAll(".group")
+          .forEach((g) => g.classList.remove("active"));
+        document
+          .querySelectorAll(".tab")
+          .forEach((t) => t.classList.remove("active"));
 
-        if (item.price !== null) {
-          text += ` $${formatMoney(item.price)}`;
+        const targetId = step === "res" ? "Result" : step;
+        const targetGroup = document.getElementById("group" + targetId);
+
+        // 每次切換分頁時自動洗牌
+        if (step !== "res") {
+          shuffleElements("group" + step);
         }
 
-        text += ` x ${item.qty}`;
-
-        return `
-        <label class="item">
-          <input type="checkbox" onchange="toggleDone(this)">
-          <span class="item-text">${text}</span>
-        </label>
-      `;
+        targetGroup.classList.add("active");
+        document.getElementById("tab" + targetId).classList.add("active");
       }
 
-      function createCardHtml(order, index) {
-        const groupedItems = groupItems(order.items);
+      function renderResult() {
+        // 修正：將選中的 data-img 路徑賦值給結果圖片的 src
+        document.getElementById("img-eye").src = selections[1];
+        document.getElementById("img-nose").src = selections[2];
+        document.getElementById("img-mouth").src = selections[3];
 
-        return `
-        <div class="order-card">
-          <div class="info-row">
-            <span class="label number">編號：</span>
-            <span class="value number">${index + 1}</span>
-          </div>
-
-          <div class="info-row">
-            <span class="label name">名稱：</span>
-            <span class="value name">${order.name}</span>
-          </div>
-
-          <div class="info-row">
-            <span class="label">總金額：</span>
-            <span class="value">$${formatMoney(order.totalAmount)}</span>
-          </div>
-
-          <div class="info-row">
-            <span class="label">已付訂金：</span>
-            <span class="value">$${formatMoney(order.deposit)}</span>
-          </div>
-
-          <div class="info-row">
-            <span class="label">尾款：</span>
-            <span class="value final-payment">$${formatMoney(order.finalPayment)}</span>
-          </div>
-
-          <hr class="divider">
-
-          <div class="item-list">
-            ${groupedItems.map(createItemHtml).join("")}
-          </div>
-
-          <hr class="divider">
-
-          <div class="card-info-list">
-            <label class="item">
-              <input type="checkbox" onchange="toggleDone(this)">
-              <span class="item-text">場週滿額卡 x ${order.eventCard}</span>
-            </label>
-
-            <label class="item">
-              <input type="checkbox" onchange="toggleDone(this)">
-              <span class="item-text">超市滿額卡 x ${order.marketCard}</span>
-            </label>
-          </div>
-        </div>
-      `;
+        showTab("res");
+        document.querySelector("h1").innerText = "你的OPPA來了！";
       }
-
-      function toggleDone(el) {
-        const item = el.closest(".item");
-        item.classList.toggle("done", el.checked);
-      }
-
-      function renderOrders() {
-        cardList.innerHTML = orderData
-          .map((order, index) => createCardHtml(order, index))
-          .join("");
-      }
-
-      renderOrders();
     </script>
   </body>
 </html>
