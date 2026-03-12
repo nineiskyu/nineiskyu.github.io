@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>海圭湯訂單明細</title>
+    <title>代購清單</title>
     <style>
       * {
         box-sizing: border-box;
@@ -25,8 +25,53 @@
       .title {
         text-align: center;
         font-size: 32px;
-        margin: 0 0 28px;
+        margin: 0 0 24px;
         color: #222;
+      }
+
+      .toolbar {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .search-input {
+        width: 100%;
+        max-width: 420px;
+        padding: 12px 16px;
+        border: 1px solid #d9dce7;
+        border-radius: 12px;
+        font-size: 16px;
+        outline: none;
+        background: #fff;
+      }
+
+      .search-input:focus {
+        border-color: #7a8cff;
+        box-shadow: 0 0 0 4px rgba(122, 140, 255, 0.12);
+      }
+
+      .clear-btn {
+        padding: 12px 18px;
+        border: none;
+        border-radius: 12px;
+        background: #222;
+        color: #fff;
+        cursor: pointer;
+        font-size: 15px;
+      }
+
+      .clear-btn:hover {
+        opacity: 0.9;
+      }
+
+      .result-text {
+        text-align: center;
+        color: #666;
+        margin-bottom: 20px;
+        font-size: 15px;
       }
 
       .card-list {
@@ -116,6 +161,15 @@
         text-decoration: line-through;
       }
 
+      .empty-text {
+        text-align: center;
+        color: #999;
+        padding: 40px 20px;
+        background: #fff;
+        border-radius: 18px;
+        border: 1px solid #ececf3;
+      }
+
       @media (max-width: 576px) {
         .title {
           font-size: 26px;
@@ -128,12 +182,35 @@
         .info-row {
           font-size: 15px;
         }
+
+        .toolbar {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .search-input,
+        .clear-btn {
+          max-width: none;
+          width: 100%;
+        }
       }
     </style>
   </head>
   <body>
     <div class="container">
       <h1 class="title">代購清單</h1>
+
+      <div class="toolbar">
+        <input
+          type="text"
+          id="searchInput"
+          class="search-input"
+          placeholder="請輸入名稱搜尋，例如：海圭湯、深海魚、圭圭腳好長、東海好可愛"
+        />
+        <button type="button" class="clear-btn" id="clearBtn">清除搜尋</button>
+      </div>
+
+      <div class="result-text" id="resultText">共 0 筆</div>
       <div id="cardList" class="card-list"></div>
     </div>
 
@@ -978,6 +1055,9 @@
       ];
 
       const cardList = document.getElementById("cardList");
+      const searchInput = document.getElementById("searchInput");
+      const clearBtn = document.getElementById("clearBtn");
+      const resultText = document.getElementById("resultText");
 
       function formatMoney(num) {
         return Number(num).toLocaleString("zh-TW");
@@ -1023,6 +1103,39 @@
       `;
       }
 
+      function createCardSection(order) {
+        const sections = [];
+
+        if (order.eventCard > 0) {
+          sections.push(`
+          <label class="item">
+            <input type="checkbox" onchange="toggleDone(this)">
+            <span class="item-text">場週滿額卡 x ${order.eventCard}</span>
+          </label>
+        `);
+        }
+
+        if (order.marketCard > 0) {
+          sections.push(`
+          <label class="item">
+            <input type="checkbox" onchange="toggleDone(this)">
+            <span class="item-text">超市滿額卡 x ${order.marketCard}</span>
+          </label>
+        `);
+        }
+
+        if (sections.length === 0) {
+          return "";
+        }
+
+        return `
+        <hr class="divider">
+        <div class="card-info-list">
+          ${sections.join("")}
+        </div>
+      `;
+      }
+
       function createCardHtml(order, index) {
         const groupedItems = groupItems(order.items);
 
@@ -1059,19 +1172,7 @@
             ${groupedItems.map(createItemHtml).join("")}
           </div>
 
-          <hr class="divider">
-
-          <div class="card-info-list">
-            <label class="item">
-              <input type="checkbox" onchange="toggleDone(this)">
-              <span class="item-text">場週滿額卡 x ${order.eventCard}</span>
-            </label>
-
-            <label class="item">
-              <input type="checkbox" onchange="toggleDone(this)">
-              <span class="item-text">超市滿額卡 x ${order.marketCard}</span>
-            </label>
-          </div>
+          ${createCardSection(order)}
         </div>
       `;
       }
@@ -1081,11 +1182,42 @@
         item.classList.toggle("done", el.checked);
       }
 
-      function renderOrders() {
-        cardList.innerHTML = orderData
+      function getFilteredData(keyword) {
+        const text = keyword.trim().toLowerCase();
+
+        if (!text) {
+          return orderData;
+        }
+
+        return orderData.filter((order) =>
+          order.name.toLowerCase().includes(text),
+        );
+      }
+
+      function renderOrders(keyword = "") {
+        const filteredData = getFilteredData(keyword);
+
+        resultText.textContent = `共 ${filteredData.length} 筆`;
+
+        if (filteredData.length === 0) {
+          cardList.innerHTML = `<div class="empty-text">找不到符合的名稱</div>`;
+          return;
+        }
+
+        cardList.innerHTML = filteredData
           .map((order, index) => createCardHtml(order, index))
           .join("");
       }
+
+      searchInput.addEventListener("input", function () {
+        renderOrders(this.value);
+      });
+
+      clearBtn.addEventListener("click", function () {
+        searchInput.value = "";
+        renderOrders("");
+        searchInput.focus();
+      });
 
       renderOrders();
     </script>
