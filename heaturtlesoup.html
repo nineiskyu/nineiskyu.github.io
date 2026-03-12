@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>拼出SJ</title>
+    <link rel="”icon”" href="/icon.png" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary: #1a3263; /* 深藍 */
+        --secondary: #547792; /* 灰藍 */
+        --accent: #fab95b; /* 暖金 */
+        --bg: #e8e2db; /* 米白 */
+        --white: #ffffff;
+      }
+
+      body {
+        font-family: "Noto Sans TC", sans-serif;
+        background-color: var(--bg);
+        color: var(--primary);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 40px 20px;
+        margin: 0;
+      }
+
+      h1 {
+        margin-bottom: 30px;
+        letter-spacing: 2px;
+        text-align: center;
+      }
+
+      /* Tab 導航列 */
+      .tab-container {
+        display: flex;
+        gap: 5px;
+        margin-bottom: -1px;
+        z-index: 2;
+      }
+
+      .tab {
+        padding: 12px 20px;
+        background: rgba(255, 255, 255, 0.5);
+        border: 1px solid #ccc;
+        border-bottom: none;
+        border-radius: 12px 12px 0 0;
+        cursor: pointer;
+        color: var(--secondary);
+        font-weight: bold;
+        transition: 0.3s;
+        font-size: 0.9rem;
+      }
+
+      .tab.active {
+        background: var(--white);
+        color: var(--primary);
+        border-top: 5px solid var(--primary);
+        padding-bottom: 13px;
+      }
+
+      /* 內容區塊 */
+      .content-card {
+        background: var(--white);
+        border: 1px solid #ccc;
+        border-radius: 15px;
+        padding: 30px;
+        width: 100%;
+        max-width: 600px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        min-height: 350px;
+      }
+
+      .group {
+        display: none;
+      }
+      .group.active {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 15px;
+        animation: fadeIn 0.4s ease;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .option {
+        width: 30%;
+
+        border: 3px solid #eee;
+        border-radius: 10px;
+        overflow: hidden;
+        cursor: pointer;
+        padding: 0;
+        background: white;
+        transition: 0.2s;
+      }
+
+      .option:hover {
+        border-color: var(--secondary);
+        transform: scale(1.05);
+      }
+      .option img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      /* 合成圖區域 */
+      .face-canvas {
+        position: relative;
+        width: 320px;
+        height: 370px;
+        background: #fafafa;
+        margin: 0 auto 20px;
+        border-radius: 20px;
+        border: 2px solid #eee;
+        overflow: hidden;
+      }
+
+      .face-canvas img {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+      }
+
+      /* 五官垂直位置微調 */
+      #img-eye {
+        top: 10%;
+        z-index: 1;
+      }
+      #img-nose {
+        top: 10%;
+        z-index: 2;
+      }
+      #img-mouth {
+        top: 10%;
+        z-index: 3;
+      }
+
+      .restart-btn {
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 12px 40px;
+        border-radius: 50px;
+        cursor: pointer;
+        font-size: 1rem;
+        display: block;
+        margin: 0 auto;
+        transition: 0.3s;
+      }
+
+      .restart-btn:hover {
+        background: var(--secondary);
+      }
+      .mt-5 {
+        margin-top: 2rem;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Find Your SJ OPPA</h1>
+
+    <div class="tab-container">
+      <div class="tab active" id="tab1">眼睛</div>
+      <div class="tab" id="tab2">鼻子</div>
+      <div class="tab" id="tab3">嘴巴</div>
+      <div class="tab" id="tabResult">結果</div>
+    </div>
+
+    <div class="content-card">
+      <div class="group active" id="group1" data-type="eyes">
+        <button class="option" onclick="selectPart(1, 'img/face/2.png', this)">
+          <img src="img/eye/1.png" />
+        </button>
+        <button class="option" onclick="selectPart(1, 'img/face/5.png', this)">
+          <img src="img/eye/2.png" />
+        </button>
+        <button class="option" onclick="selectPart(1, 'img/face/9.png', this)">
+          <img src="img/eye/3.png" />
+        </button>
+        <button class="option" onclick="selectPart(1, 'img/face/1.png', this)">
+          <img src="img/eye/4.png" />
+        </button>
+        <button class="option" onclick="selectPart(1, 'img/face/4.png', this)">
+          <img src="img/eye/5.png" />
+        </button>
+        <button class="option" onclick="selectPart(1, 'img/face/7.png', this)">
+          <img src="img/eye/6.png" />
+        </button>
+        <button class="option" onclick="selectPart(1, 'img/face/6.png', this)">
+          <img src="img/eye/7.png" />
+        </button>
+        <button class="option" onclick="selectPart(1, 'img/face/3.png', this)">
+          <img src="img/eye/8.png" />
+        </button>
+        <button class="option" onclick="selectPart(1, 'img/face/8.png', this)">
+          <img src="img/eye/9.png" />
+        </button>
+      </div>
+
+      <div class="group" id="group2" data-type="nose">
+        <button class="option" onclick="selectPart(2, 'img/nose/1.png', this)">
+          <img src="img/nose/big/1.png" />
+        </button>
+        <button class="option" onclick="selectPart(2, 'img/nose/2.png', this)">
+          <img src="img/nose/big/2.png" />
+        </button>
+        <button class="option" onclick="selectPart(2, 'img/nose/3.png', this)">
+          <img src="img/nose/big/3.png" />
+        </button>
+        <button class="option" onclick="selectPart(2, 'img/nose/4.png', this)">
+          <img src="img/nose/big/4.png" />
+        </button>
+        <button class="option" onclick="selectPart(2, 'img/nose/5.png', this)">
+          <img src="img/nose/big/5.png" />
+        </button>
+        <button class="option" onclick="selectPart(2, 'img/nose/6.png', this)">
+          <img src="img/nose/big/6.png" />
+        </button>
+        <button class="option" onclick="selectPart(2, 'img/nose/7.png', this)">
+          <img src="img/nose/big/7.png" />
+        </button>
+        <button class="option" onclick="selectPart(2, 'img/nose/8.png', this)">
+          <img src="img/nose/big/8.png" />
+        </button>
+        <button class="option" onclick="selectPart(2, 'img/nose/9.png', this)">
+          <img src="img/nose/big/9.png" />
+        </button>
+      </div>
+
+      <div class="group" id="group3" data-type="mouth">
+        <button class="option" onclick="selectPart(3, 'img/mouse/1.png', this)">
+          <img src="img/mouse/big/9.png" />
+        </button>
+        <button class="option" onclick="selectPart(3, 'img/mouse/2.png', this)">
+          <img src="img/mouse/big/8.png" />
+        </button>
+        <button class="option" onclick="selectPart(3, 'img/mouse/3.png', this)">
+          <img src="img/mouse/big/7.png" />
+        </button>
+        <button class="option" onclick="selectPart(3, 'img/mouse/4.png', this)">
+          <img src="img/mouse/big/6.png" />
+        </button>
+        <button class="option" onclick="selectPart(3, 'img/mouse/5.png', this)">
+          <img src="img/mouse/big/5.png" />
+        </button>
+        <button class="option" onclick="selectPart(3, 'img/mouse/6.png', this)">
+          <img src="img/mouse/big/4.png" />
+        </button>
+        <button class="option" onclick="selectPart(3, 'img/mouse/7.png', this)">
+          <img src="img/mouse/big/3.png" />
+        </button>
+        <button class="option" onclick="selectPart(3, 'img/mouse/8.png', this)">
+          <img src="img/mouse/big/2.png" />
+        </button>
+        <button class="option" onclick="selectPart(3, 'img/mouse/9.png', this)">
+          <img src="img/mouse/big/1.png" />
+        </button>
+      </div>
+
+      <div class="group" id="groupResult">
+        <div class="face-canvas">
+          <img id="img-eye" src="" />
+          <img id="img-nose" src="" />
+          <img id="img-mouth" src="" />
+        </div>
+      </div>
+      <button class="restart-btn mt-5" onclick="location.reload()">
+        重新組合
+      </button>
+    </div>
+
+    <script>
+      const selections = { 1: null, 2: null, 3: null };
+
+      // 隨機洗牌函式
+      function shuffleElements(parentId) {
+        const parent = document.getElementById(parentId);
+        const items = Array.from(parent.children);
+        for (let i = items.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          parent.appendChild(items[j]);
+        }
+      }
+
+      // 初始化時洗牌第一組
+      window.onload = () => {
+        shuffleElements("group1");
+      };
+
+      function selectPart(step, imgPath, btn) {
+        selections[step] = imgPath;
+        if (step < 3) {
+          showTab(step + 1);
+        } else {
+          renderResult();
+        }
+      }
+
+      function showTab(step) {
+        document
+          .querySelectorAll(".group")
+          .forEach((g) => g.classList.remove("active"));
+        document
+          .querySelectorAll(".tab")
+          .forEach((t) => t.classList.remove("active"));
+
+        const targetId = step === "res" ? "Result" : step;
+        const targetGroup = document.getElementById("group" + targetId);
+
+        // 每次切換分頁時自動洗牌
+        if (step !== "res") {
+          shuffleElements("group" + step);
+        }
+
+        targetGroup.classList.add("active");
+        document.getElementById("tab" + targetId).classList.add("active");
+      }
+
+      function renderResult() {
+        // 修正：將選中的 data-img 路徑賦值給結果圖片的 src
+        document.getElementById("img-eye").src = selections[1];
+        document.getElementById("img-nose").src = selections[2];
+        document.getElementById("img-mouth").src = selections[3];
+
+        showTab("res");
+        document.querySelector("h1").innerText = "你的OPPA來了！";
+      }
+    </script>
+  </body>
+</html>
