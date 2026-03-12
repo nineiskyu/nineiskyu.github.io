@@ -409,7 +409,7 @@
           finalPayment: parseInt(row["尾款"].replace(/[^\d]/g, "")),
           eventCard: Number(row["場週滿額"] || 0),
           marketCard: Number(row["超市滿額"] || 0),
-          items: row["商品"] ? row["商品"].split("、") : [],
+          items: row["訂購明細"] ? row["訂購明細"].split("、") : [],
         }));
 
         renderOrders();
